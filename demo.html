@@ -1,0 +1,21 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <script type="text/javascript" src="geoSelf.0.jquery.js"></script>
+    <script type="text/javascript">
+    $(function(){
+       $('input').geoSelf();
+        $('button').click(function(){
+            var validation = JSON.stringify($('input')[0].validation);
+            $('label').text(validation);
+        });
+    });
+    </script>
+</head>
+<body>
+    <input type="text" />
+    <button>wtf</button>
+    <label></label>
+</body>
+</html>
