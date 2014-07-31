@@ -2,19 +2,20 @@
 <head>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
-    <script type="text/javascript" src="geoSelf.0.jquery.js"></script>
+    <script type="text/javascript" src="geoSelf.jquery.js"></script>
     <script type="text/javascript">
     $(function(){
-       $('input').geoSelf();
+       var geoSelf = $('#geoSelf');
+       geoSelf.geoSelf();
+
         $('button').click(function(){
-            var validation = JSON.stringify($('input')[0].validation);
-            $('label').text(validation);
+            $('label').text(geoSelf[0].isValid());
         });
     });
     </script>
 </head>
 <body>
-    <input type="text" />
+    <input id="geoSelf" type="text" />
     <button>wtf</button>
     <label></label>
 </body>
