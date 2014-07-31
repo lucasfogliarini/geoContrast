@@ -5,18 +5,18 @@
     <script type="text/javascript" src="geoSelf.jquery.js"></script>
     <script type="text/javascript">
     $(function(){
-       var geoSelf = $('#geoSelf');
-       geoSelf.geoSelf();
-
+        var geoSelf = $('#geoSelf');
+        geoSelf.geoSelf();
+        
         $('button').click(function(){
-            $('label').text(geoSelf[0].isValid());
+            var isValid = geoSelf[0].isValid();
+            alert(isValid);
         });
     });
     </script>
 </head>
 <body>
     <input id="geoSelf" type="text" />
-    <button>wtf</button>
-    <label></label>
+<button>isValid?</button>
 </body>
 </html>
