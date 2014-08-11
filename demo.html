@@ -5,10 +5,16 @@
     <script type="text/javascript" src="geoContrast.jquery.js"></script>
     <script type="text/javascript">
     $(function(){
-        $('.geo').geoContrast({
-            pin : {
-                uri_off: 'location-on-16.png',
-                uri_on: 'location-off-16.png'
+        window.geoContrast.defaultOptions.set.input_title = "Wanna change? Click on the pin!";
+
+        $('.geo').geoContrast();
+
+        $('#geo3').geoContrast({
+            set:{
+              pin: 'location-off-16.png'
+            },
+            nset:{
+              pin: 'location-on-16.png'
             }
         });
     });
@@ -17,5 +23,7 @@
 <body>
     <input id="geo1" type="text" class="geo"/>
     <input id="geo2" type="text" class="geo"/>
+
+    <input id="geo3" type="text"/>
 </body>
 </html>
