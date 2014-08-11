@@ -1,5 +1,5 @@
 $(function(){
-    $.fn.geoSelf = function(options){
+    $.fn.geoContrast = function(options){
       var $autocompletes = this;
       for (var i = 0; i < $autocompletes.length; i++) {
         var $autocomplete = $($autocompletes[i]);
@@ -10,17 +10,17 @@ $(function(){
           pin: {//16x16
             title_on: undefined,
             title_off: 'Not set',
-            uri_on:'location-on-16.png',
-            uri_off:'location-off-16.png'
+            uri_on:'https://raw.githubusercontent.com/lucasfogliarini/geoContrast/master/location-on-16.png',
+            uri_off:'https://raw.githubusercontent.com/lucasfogliarini/geoContrast/master/location-off-16.png'
           }
         }
         $autocompletes[i].options = $.extend(true,$autocompletes[i].defaultOptions,options);
         $autocompletes[i].gmap_autocomplete = new google.maps.places.Autocomplete($autocompletes[i], $autocompletes[i].options.gmap_options);
         $autocompletes[i].gmap_autocomplete.input = $autocompletes[i];
-        $autocompletes[i].$pin = $('<label class="pin_geoSelf"/>');
-        $autocompletes[i].$toggle = $('<input class="toggle_geoSelf" type="checkbox" />');
-        $autocompletes[i].$lat = $('<input class="lat_geoSelf" type="hidden" />');
-        $autocompletes[i].$lng = $('<input class="lng_geoSelf" type="hidden" />');
+        $autocompletes[i].$pin = $('<label class="pin_geoContrast"/>');
+        $autocompletes[i].$toggle = $('<input class="toggle_geoContrast" type="checkbox" />');
+        $autocompletes[i].$lat = $('<input class="lat_geoContrast" type="hidden" />');
+        $autocompletes[i].$lng = $('<input class="lng_geoContrast" type="hidden" />');
         //endprops
 
         //methods
@@ -69,7 +69,7 @@ $(function(){
         $autocomplete.after($autocompletes[i].$lat);
         $autocomplete.after($autocompletes[i].$toggle);
 
-        $autocompletes[i].$toggle.attr('id','geoSelf_toggle_'+i);
+        $autocompletes[i].$toggle.attr('id','geoContrast_toggle_'+i);
         $autocompletes[i].$toggle.hide().change(function(){
           $(this).prev()[0].clearLocation();
         });
@@ -81,7 +81,7 @@ $(function(){
           padding: '0 8px',
           cursor: 'pointer'
         });
-        $autocompletes[i].$pin.attr('for','geoSelf_toggle_'+i);
+        $autocompletes[i].$pin.attr('for','geoContrast_toggle_'+i);
 
         google.maps.event.addListener($autocompletes[i].gmap_autocomplete, 'place_changed', function(){
           this.input.gmapPlace = this.getPlace();
