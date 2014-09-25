@@ -92,9 +92,9 @@ $(function(){
 
 
         google.maps.event.addListener($autocompletes[i].gmap_autocomplete, 'place_changed', function(){
-          this.input.gmapPlace = this.getPlace();
-          var location = this.input.gmapPlace.geometry === undefined ? undefined :
-                          this.input.gmapPlace.geometry.location;
+          this.input.place_info = this.getPlace();
+          var location = this.input.place_info.geometry === undefined ? undefined :
+                          this.input.place_info.geometry.location;
           if(location) this.input.setLocation(location);
           this.input.toggle(location);
         });
@@ -106,9 +106,7 @@ $(function(){
           $(document).on('dblclick','.pin_geo-contrast',function(){
             var autocomplete = $(this).prev()[0];
             if (autocomplete.isValid()) {
-              var lat = autocomplete.$lat.val();
-              var lng = autocomplete.$lng.val();
-              window.open('https://www.google.com/maps/@'+lat+','+lng+',12z');
+              window.open('https://www.google.com.br/maps/place/'+autocomplete.place_info.formatted_address);
             };
           });
         };
