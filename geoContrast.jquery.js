@@ -50,7 +50,7 @@ $(function(){
             pin_title = this.options.set.pin_title;
             pin_title = pin_title === 'gmaps' ? 'Double-click to gmaps; lat: '+this.$lat.val()+'; lng: '+this.$lng.val() : pin_title;
             input_title = this.options.set.input_title;
-            input_cursor = 'not-allowed';
+            input_cursor = 'pointer';
             if(input_title){
               this.$autocomplete.attr('title',input_title);
             }
