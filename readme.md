@@ -1,25 +1,41 @@
-### Hello, i am geoContrast. ;)
+#### Hello, i am geoContrast.
 
-#### How i works:
-* http://codepen.io/lucasfogliarini/pen/zhjHB
+## Are you still here? :)
 
-#### Dependencies? Yes.
+- You want something?
+- You want coordinates of a place on earth?
+- You want a unique_id of this place?
+- You want complete [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about this place?
 
-1. Places autocomplete by Google (http://goo.gl/jSK4mr)
-  * http://maps.googleapis.com/maps/api/js?libraries=places.
+I am beta **:(**  
+But, i can get it for you. **:)**
 
-2. Jquery (http://jquery.com/)
-  * http://code.jquery.com/jquery-2.1.0.min.js.
+**Are you ready?**
+**Let's go!**
 
-3. Myself
-  1. clone me (recommended)
-  2. https://rawgit.com/lucasfogliarini/geoContrast/master/geoContrast.min.jquery.js
+Goto [my clone](http://codepen.io/lucasfogliarini/pen/zhjHB) and back here!
 
-#### CamelCase? I had some influences.
+### Imagine one @place
+(recommended) @place = "parque moinhos de Vento, Porto Alegre"
 
-#### Did you like me? Use me.
+1. **Type:** @place.
+2. Choice the hint.
+3. Caught the @place?
+4. Now you can...
+  * Open on google maps: **double-click on black pin.**
+  * Get [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult): **document.getElementById('#id').place_info.**
 
-#### Did you like part of me? Fork me.
 
-#### Didn't you like me? Do better.
+**I am needy! :(**  
+Use and ask more about me to [*lucasfogliarini*](http://about.me/lucasfogliarini/), pleeeeease!
 
+#### Dependencies? Yes. :/
+
+1. http://maps.googleapis.com/maps/api/js?libraries=places.
+2. http://code.jquery.com/jquery-2.1.0.min.js.
+3. https://rawgit.com/lucasfogliarini/geoContrast/master/geoContrast.jquery.js
+
+Did you like me? Use me. **:)**  
+Did you like part of me? Fork me. **:)**  
+Didn't you like me? **:(**  
+...Do better! **-.-**
