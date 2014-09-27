@@ -1,7 +1,7 @@
 $(function(){
     window.geoContrast = {
       counter: 0,
-      defaultOptions: {
+      default_options: {
         gmap_options: { componentRestrictions: { country: 'br'} },
         set:{
           input_title: 'Double-click to unset.',
@@ -22,7 +22,7 @@ $(function(){
         window.geoContrast.counter += 1;
 
         //props
-        $autocompletes[i].options = $.extend(true,window.geoContrast.defaultOptions,options);
+        $autocompletes[i].options = $.extend(true,window.geoContrast.default_options,options);
         $autocompletes[i].gmap_autocomplete = new google.maps.places.Autocomplete($autocompletes[i], $autocompletes[i].options.gmap_options);
         $autocompletes[i].gmap_autocomplete.input = $autocompletes[i];//accessibility
         $autocompletes[i].$pin = $('<label class="pin_geo-contrast"/>');
