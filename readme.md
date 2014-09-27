@@ -1,11 +1,10 @@
 #### Hello, i am geoContrast.
 
-## Are you still here? :)
+### Want to know me? :)
 
-- You want something?
-- You want coordinates of a place on earth?
-- You want a unique_id of this place?
-- You want complete [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about this place?
+- Want coordinates of a place on earth?
+- Want a unique_id of this place?
+- Want complete [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about this place?
 
 I am beta **:(**  
 But, i can get it for you. **:)**
@@ -25,15 +24,13 @@ Goto [my clone](http://codepen.io/lucasfogliarini/pen/zhjHB) and back here!
   * Open on google maps: **double-click on black pin.**
   * Get [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult): **document.getElementById('#id').place_info.**
 
-
-**I am needy! :(**  
-Use and ask more about me to [*lucasfogliarini*](http://about.me/lucasfogliarini/), pleeeeease!
+Want to know more about me? Ask to [*lucasfogliarini*](http://about.me/lucasfogliarini/).
 
 #### Dependencies? Yes. :/
 
 1. http://maps.googleapis.com/maps/api/js?libraries=places.
 2. http://code.jquery.com/jquery-2.1.0.min.js.
-3. https://rawgit.com/lucasfogliarini/geoContrast/master/geoContrast.jquery.js
+3. https://rawgit.com/lucasfogliarini/geoContrast/master/geo-contrast.jquery.js
 
 Did you like me? Use me. **:)**  
 Did you like part of me? Fork me. **:)**  
