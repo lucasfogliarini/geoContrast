@@ -3,11 +3,10 @@
 ### Want to know me? :)
 
 - Want coordinates of a place on earth?
-- Want a unique_id of this place?
-- Want complete [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about this place?
+- Want a unique id of this place?
+- Want a [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about this place?
 
-I am beta **:(**  
-But, i can get it for you. **:)**
+I can get it for you. **:)**
 
 **Are you ready?**
 **Let's go!**
@@ -18,15 +17,15 @@ Goto [my clone](http://codepen.io/lucasfogliarini/pen/zhjHB) and back here!
 (recommended) @place = "parque moinhos de Vento, Porto Alegre"
 
 1. **Type:** @place.
-2. Choice the hint.
+2. Choice a hint.
 3. Caught the @place?
 4. Now you can...
-  * Open on google maps: **double-click on black pin.**
+  * Open on google maps: **Click on black pin.**
   * Get [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult): **document.getElementById('#id').place_info.**
 
 Want to know more about me? Ask to [*lucasfogliarini*](http://about.me/lucasfogliarini/).
 
-#### Dependencies? Yes. :/
+#### Dependencies? Yes. :(
 
 1. http://maps.googleapis.com/maps/api/js?libraries=places.
 2. http://code.jquery.com/jquery-2.1.0.min.js.

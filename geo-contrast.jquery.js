@@ -1,9 +1,17 @@
+/*
+geoContrast v0.9 author: https://github.com/lucasfogliarini
+
+warning! Google places has duplicates.
+
+*/
 $(function(){
     window.geoContrast = {
       count: 0,
-      default_options: {
-        gmap_options: { componentRestrictions: { country: 'br'} },
+      options_default: {
+        options_gmap: { componentRestrictions: { country: 'br'} },
         gmaps: true,
+        latName: 'latitude',
+        lngName: 'longitude',
         assigned:{
           input_title: undefined,
           pin_title: 'Click to open on Google Maps.',
@@ -19,40 +27,35 @@ $(function(){
 
     $.fn.geoContrast = function(options){
       var $inputs = this;
-      for (var i = 0; i < $inputs.length; i++) {
+      for (var i = 0; i < $inputs.length; i++){
         window.geoContrast.count += 1;
-
         //props
-        $inputs[i].options = $.extend(true,window.geoContrast.default_options,options);
-        $inputs[i].gmap_autocomplete = new google.maps.places.Autocomplete($inputs[i], $inputs[i].options.gmap_options);
-        $inputs[i].gmap_autocomplete.input = $inputs[i];//accessibility
+        $inputs[i].options = $.extend(true,window.geoContrast.options_default,options);
+        $inputs[i].autocomplete_gmap = new google.maps.places.Autocomplete($inputs[i], $inputs[i].options.options_gmap);
+        $inputs[i].geocoder = new google.maps.Geocoder();
+        $inputs[i].autocomplete_gmap.inputPlace = $inputs[i];//accessibility
         $inputs[i].$pin = $('<label class="pin_geo-contrast"/>');
-        $inputs[i].$input = $($inputs[i]);
+        $inputs[i].$inputPlace = $($inputs[i]);
         $inputs[i].$lat = $('<input class="lat_geo-contrast" type="hidden" />');
         $inputs[i].$lng = $('<input class="lng_geo-contrast" type="hidden" />');
         //endprops
 
         //methods
-        $inputs[i].setLocation = function(location){
-          try{
-            this.$lat.val(location.lat());
-            this.$lng.val(location.lng());
-          } catch(ex){
-            throw ex;
-          }
-        }
-
         $inputs[i].toggle = function(assign){
           var input_title, pin, pin_title;
 
-          if (assign) {
+          if (assign)
+          {
             pin_img = this.options.assigned.pin_img;
             pin_title = this.options.assigned.pin_title;
             input_title = this.options.assigned.input_title;
-            if(input_title){
-              this.$input.attr('title',input_title);
+            if(input_title)
+            {
+              this.$inputPlace.attr('title',input_title);
             }
-          }else{
+          }
+          else
+          {
             this.$lat.val('');
             this.$lng.val('');
             pin_img = this.options.unassigned.pin_img;
@@ -61,21 +64,70 @@ $(function(){
           }
           this.$pin.css('background','no-repeat url('+pin_img+')');
           this.$pin.attr('title',pin_title);
-          this.$input.attr('title',input_title);
+          this.$inputPlace.attr('title',input_title);
         }
 
         $inputs[i].assigned = function(){
           return this.$lat.val() !== '';
         }
+
+        $inputs[i].assign = function(place_info){
+          this.place_info = place_info;
+          var location = this.place_info.geometry === undefined ? undefined :
+                          this.place_info.geometry.location;
+          try{
+            this.$lat.val(location.lat());
+            this.$lng.val(location.lng());
+            this.value = place_info.formatted_address;
+            this.toggle(true);
+          } catch(ex){
+            throw ex;
+          }
+          return this.place_info;
+        }
+
+        $inputs[i].findAddress = function(formatted_address){
+          if (formatted_address !== "") {
+            var inputPlace = this;
+            this.geocoder.geocode({"address": formatted_address }, function(results) {
+                if (results.length > 0) {
+                  var place_info = results[0];
+                  inputPlace.assign(place_info);
+                  return place_info;
+                }
+            });
+          }
+          return false;
+        }
+
+        $inputs[i].inputNames = function(input_place_name)
+        {
+          this.$inputPlace.name = input_place_name;
+
+          var firstBracket = input_place_name.indexOf('[');
+          var latName = this.options.latName;
+          var lngName = this.options.lngName;
+          if (firstBracket > 0) {
+            var inputAttr = input_place_name.substr(firstBracket);
+            latName = input_place_name.replace(inputAttr,"["+latName+"]");
+            lngName = input_place_name.replace(inputAttr,"["+lngName+"]");
+          }
+          this.$lat.prop('name',latName);
+          this.$lng.prop('name',lngName);
+        }
+
+        $inputs[i].getFirstHint = function(){
+          //fail on multiples
+          return $(".pac-container .pac-item:first").text();
+        }
         //endmethods
 
         //init
-        $inputs[i].$input.addClass('geo-contrast');
-        $inputs[i].$input.css('padding-right','20px');
-        $inputs[i].$input.after($inputs[i].$lng);
-        $inputs[i].$input.after($inputs[i].$lat);
-        $inputs[i].$input.after($inputs[i].$pin);        
-
+        $inputs[i].$inputPlace.addClass('geo-contrast');
+        $inputs[i].$inputPlace.css('padding-right','20px');
+        $inputs[i].$inputPlace.after($inputs[i].$lng);
+        $inputs[i].$inputPlace.after($inputs[i].$lat);
+        $inputs[i].$inputPlace.after($inputs[i].$pin);
         $inputs[i].$pin.css({
           position:'relative',
           right:'20px',
@@ -84,28 +136,35 @@ $(function(){
           cursor: 'pointer'
         });
 
-        google.maps.event.addListener($inputs[i].gmap_autocomplete, 'place_changed', function(){
-          this.input.place_info = this.getPlace();
-          var location = this.input.place_info.geometry === undefined ? undefined :
-                          this.input.place_info.geometry.location;
-          if(location) this.input.setLocation(location);
-          this.input.toggle(location);
+
+        google.maps.event.addListener($inputs[i].autocomplete_gmap, 'place_changed', function(){
+          var place_info = this.getPlace();
+          this.inputPlace.assign(place_info);
         });
+
+        $(document).on('input','.geo-contrast',function(){
+          if(this.assigned()){
+            this.toggle(false);
+          }
+        });
+
+        $(document).on('blur','.geo-contrast',function(){
+          var inputPlace = this;
+          if (!inputPlace.assigned()) {
+            this.findAddress(this.getFirstHint())
+          }
+        });
+
+        $(document).on('click','.pin_geo-contrast',function(){
+          var input = $(this).prev()[0];
+          if (input.assigned() && input.options.gmaps)
+            window.open('https://www.google.com.br/maps/place/'+input.place_info.formatted_address);
+        });
+
+        $inputs[i].inputNames($inputs[i].name);
         $inputs[i].toggle(false);
-        if (window.geoContrast.count > 0) {
-          $(document).on('input','.geo-contrast',function(){
-            if (this.assigned()) {
-              this.toggle(false);
-            };
-          });
-          $(document).on('click','.pin_geo-contrast',function(){
-            var input = $(this).prev()[0];
-            if (input.assigned() && input.options.gmaps) {
-              window.open('https://www.google.com.br/maps/place/'+input.place_info.formatted_address);
-            };
-          });
-        };
+        $inputs[i].findAddress($inputs[i].value);
         //endinit
-      };
+      }
     }
 });
