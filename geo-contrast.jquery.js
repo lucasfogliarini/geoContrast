@@ -2,7 +2,6 @@
 geoContrast v0.9 author: https://github.com/lucasfogliarini
 
 warning! Google places has duplicates.
-
 */
 $(function(){
     window.geoContrast = {
@@ -10,8 +9,7 @@ $(function(){
       options_default: {
         options_gmap: { componentRestrictions: { country: 'br'} },
         gmaps: true,
-        latName: 'latitude',
-        lngName: 'longitude',
+        assignAfterBlur: true,
         assigned:{
           input_title: undefined,
           pin_title: 'Click to open on Google Maps.',
@@ -36,8 +34,6 @@ $(function(){
         $inputs[i].autocomplete_gmap.inputPlace = $inputs[i];//accessibility
         $inputs[i].$pin = $('<label class="pin_geo-contrast"/>');
         $inputs[i].$inputPlace = $($inputs[i]);
-        $inputs[i].$lat = $('<input class="lat_geo-contrast" type="hidden" />');
-        $inputs[i].$lng = $('<input class="lng_geo-contrast" type="hidden" />');
         //endprops
 
         //methods
@@ -56,8 +52,8 @@ $(function(){
           }
           else
           {
-            this.$lat.val('');
-            this.$lng.val('');
+            this.place_info  = undefined;
+            this.coords('','');
             pin_img = this.options.unassigned.pin_img;
             pin_title = this.options.unassigned.pin_title;
             input_title = this.options.unassigned.input_title;
@@ -68,31 +64,41 @@ $(function(){
         }
 
         $inputs[i].assigned = function(){
-          return this.$lat.val() !== '';
+          return this.place_info !== undefined && this.place_info.formatted_address !== undefined;
+        }
+
+        $inputs[i].coords = function(lat,lng){
+          if (this.coords_appended) {
+            this.$lat.val(lat);
+            this.$lng.val(lng);
+          };
         }
 
         $inputs[i].assign = function(place_info){
           this.place_info = place_info;
-          var location = this.place_info.geometry === undefined ? undefined :
-                          this.place_info.geometry.location;
-          try{
-            this.$lat.val(location.lat());
-            this.$lng.val(location.lng());
+          var assigned = this.assigned();
+          if(assigned){
             this.value = place_info.formatted_address;
-            this.toggle(true);
+          }
+          this.toggle(assigned);
+          try{
+            var location = this.place_info.geometry.location;
+            this.coords(location.lat(),location.lng());
           } catch(ex){
             throw ex;
           }
           return this.place_info;
         }
 
-        $inputs[i].findAddress = function(formatted_address){
+        $inputs[i].findAddress = function(formatted_address, try_assign){
           if (formatted_address !== "") {
             var inputPlace = this;
             this.geocoder.geocode({"address": formatted_address }, function(results) {
                 if (results.length > 0) {
                   var place_info = results[0];
-                  inputPlace.assign(place_info);
+                  if (try_assign) {
+                    inputPlace.assign(place_info);
+                  };
                   return place_info;
                 }
             });
@@ -100,20 +106,23 @@ $(function(){
           return false;
         }
 
-        $inputs[i].inputNames = function(input_place_name)
+        $inputs[i].appendCoords = function(latName,lngName)
         {
-          this.$inputPlace.name = input_place_name;
-
-          var firstBracket = input_place_name.indexOf('[');
-          var latName = this.options.latName;
-          var lngName = this.options.lngName;
+          latName = latName ? latName : "latitude";
+          lngName = lngName ? lngName : "longitude";
+          var firstBracket = this.name.indexOf('[');
           if (firstBracket > 0) {
-            var inputAttr = input_place_name.substr(firstBracket);
-            latName = input_place_name.replace(inputAttr,"["+latName+"]");
-            lngName = input_place_name.replace(inputAttr,"["+lngName+"]");
+            var inputAttr = this.name.substr(firstBracket);
+            latName = this.name.replace(inputAttr,"["+latName+"]");
+            lngName = this.name.replace(inputAttr,"["+lngName+"]");
           }
-          this.$lat.prop('name',latName);
-          this.$lng.prop('name',lngName);
+
+          this.$lat = $('<input class="lat_geo-contrast" type="hidden" />').prop('name',latName);
+          this.$lng = $('<input class="lng_geo-contrast" type="hidden" />').prop('name',lngName);
+
+          this.$pin.after(this.$lng);
+          this.$pin.after(this.$lat);
+          this.coords_appended = true;
         }
 
         $inputs[i].getFirstHint = function(){
@@ -125,8 +134,6 @@ $(function(){
         //init
         $inputs[i].$inputPlace.addClass('geo-contrast');
         $inputs[i].$inputPlace.css('padding-right','20px');
-        $inputs[i].$inputPlace.after($inputs[i].$lng);
-        $inputs[i].$inputPlace.after($inputs[i].$lat);
         $inputs[i].$inputPlace.after($inputs[i].$pin);
         $inputs[i].$pin.css({
           position:'relative',
@@ -151,7 +158,7 @@ $(function(){
         $(document).on('blur','.geo-contrast',function(){
           var inputPlace = this;
           if (!inputPlace.assigned()) {
-            this.findAddress(this.getFirstHint())
+            this.findAddress(this.getFirstHint(), this.options.assignAfterBlur);
           }
         });
 
@@ -161,9 +168,7 @@ $(function(){
             window.open('https://www.google.com.br/maps/place/'+input.place_info.formatted_address);
         });
 
-        $inputs[i].inputNames($inputs[i].name);
-        $inputs[i].toggle(false);
-        $inputs[i].findAddress($inputs[i].value);
+        $inputs[i].findAddress($inputs[i].value, true);
         //endinit
       }
     }
