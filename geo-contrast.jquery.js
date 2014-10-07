@@ -1,15 +1,16 @@
 /*
 geoContrast v0.9 author: https://github.com/lucasfogliarini
-
-warning! Google places has duplicates.
 */
 $(function(){
     window.geoContrast = {
       count: 0,
       options_default: {
-        options_gmap: { componentRestrictions: { country: 'br'} },
+        options_gmap: { //http://goo.gl/clWmHG
+          componentRestrictions: { country: 'br'},
+          types: ['geocode']//geocode, establishment, (regions), (cities), establishment
+        },
         gmaps: true,
-        assignAfterBlur: true,
+        assign_after_blur: false,
         assigned:{
           input_title: undefined,
           pin_title: 'Click to open on Google Maps.',
@@ -52,8 +53,9 @@ $(function(){
           }
           else
           {
-            this.place_info  = undefined;
-            this.coords('','');
+            this.place_info = undefined;
+            this.syncCoords();
+            this.syncBounds();
             pin_img = this.options.unassigned.pin_img;
             pin_title = this.options.unassigned.pin_title;
             input_title = this.options.unassigned.input_title;
@@ -63,51 +65,79 @@ $(function(){
           this.$inputPlace.attr('title',input_title);
         }
 
-        $inputs[i].assigned = function(){
+        $inputs[i].placeInfoAssigned = function(){
           return this.place_info !== undefined && this.place_info.formatted_address !== undefined;
         }
 
-        $inputs[i].coords = function(lat,lng){
-          if (this.coords_appended) {
-            this.$lat.val(lat);
-            this.$lng.val(lng);
-          };
+        $inputs[i].boundsAssigned = function(){
+          return this.placeInfoAssigned() && this.place_info.geometry.bounds !== undefined;
         }
 
-        $inputs[i].assign = function(place_info){
-          this.place_info = place_info;
-          var assigned = this.assigned();
-          if(assigned){
-            this.value = place_info.formatted_address;
-          }
-          this.toggle(assigned);
+        $inputs[i].syncCoords = function(){
           try{
-            var location = this.place_info.geometry.location;
-            this.coords(location.lat(),location.lng());
+            if (this.$lat !== undefined){
+              var lat;
+              var lng;
+              if(this.placeInfoAssigned()) {
+                lat = this.place_info.geometry.location.lat();
+                lng = this.place_info.geometry.location.lng();
+              }
+              this.$lat.val(lat);
+              this.$lng.val(lng);
+            }
           } catch(ex){
             throw ex;
           }
-          return this.place_info;
         }
 
-        $inputs[i].findAddress = function(formatted_address, try_assign){
-          if (formatted_address !== "") {
+        $inputs[i].syncBounds = function(){
+          try{
+            if (this.$bounds !== undefined){
+              var bounds;
+              if (this.boundsAssigned()) {
+                bounds = this.place_info.geometry.bounds.toUrlValue();
+              }
+              this.$bounds.val(bounds);
+            }
+          } catch(ex){
+            throw ex;
+          }
+        }
+
+        $inputs[i].tryAssign = function(place_info){
+          if(place_info !== undefined)
+            this.place_info = place_info;
+
+          var place_info_assigned = this.placeInfoAssigned();
+          if(place_info_assigned){
+            this.value = this.place_info.formatted_address;
+            this.syncCoords();
+            this.syncBounds();
+          }
+          this.toggle(place_info_assigned);
+        }
+
+        $inputs[i].findPlaceInfo = function(formatted_address, call){
+          if(formatted_address !== ""){
             var inputPlace = this;
             this.geocoder.geocode({"address": formatted_address }, function(results) {
-                if (results.length > 0) {
-                  var place_info = results[0];
-                  if (try_assign) {
-                    inputPlace.assign(place_info);
-                  };
-                  return place_info;
-                }
+              if (results.length > 0) {
+                inputPlace.place_info = results[0];
+                if (call !== undefined) {
+                  call.call(inputPlace);
+                };
+              }
             });
           }
-          return false;
         }
 
-        $inputs[i].appendCoords = function(latName,lngName)
-        {
+        $inputs[i].appendBounds = function(boundsName){
+          boundsName = boundsName ? boundsName : "bounds";
+          this.$bounds = $('<input class="bounds_geo-contrast" type="hidden" />').prop('name',boundsName);
+          this.$pin.after(this.$bounds);
+        }
+
+        $inputs[i].appendCoords = function(latName,lngName){
           latName = latName ? latName : "latitude";
           lngName = lngName ? lngName : "longitude";
           var firstBracket = this.name.indexOf('[');
@@ -122,11 +152,10 @@ $(function(){
 
           this.$pin.after(this.$lng);
           this.$pin.after(this.$lat);
-          this.coords_appended = true;
         }
 
         $inputs[i].getFirstHint = function(){
-          //fail on multiples
+          //fail with multiples
           return $(".pac-container .pac-item:first").text();
         }
         //endmethods
@@ -143,32 +172,35 @@ $(function(){
           cursor: 'pointer'
         });
 
-
         google.maps.event.addListener($inputs[i].autocomplete_gmap, 'place_changed', function(){
           var place_info = this.getPlace();
-          this.inputPlace.assign(place_info);
+          this.inputPlace.tryAssign(place_info);
         });
 
         $(document).on('input','.geo-contrast',function(){
-          if(this.assigned()){
+          if(this.placeInfoAssigned()){
             this.toggle(false);
           }
         });
 
+        //after autocomplete.place_changed
         $(document).on('blur','.geo-contrast',function(){
-          var inputPlace = this;
-          if (!inputPlace.assigned()) {
-            this.findAddress(this.getFirstHint(), this.options.assignAfterBlur);
+          if (this.options.assign_after_blur){
+            this.findPlaceInfo(this.getFirstHint(), function(){
+              this.tryAssign();
+            });
           }
         });
 
         $(document).on('click','.pin_geo-contrast',function(){
           var input = $(this).prev()[0];
-          if (input.assigned() && input.options.gmaps)
+          if (input.placeInfoAssigned() && input.options.gmaps)
             window.open('https://www.google.com.br/maps/place/'+input.place_info.formatted_address);
         });
 
-        $inputs[i].findAddress($inputs[i].value, true);
+        $inputs[i].findPlaceInfo($inputs[i].value,function(){
+          this.tryAssign();
+        });
         //endinit
       }
     }
