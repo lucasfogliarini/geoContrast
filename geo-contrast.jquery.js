@@ -10,7 +10,7 @@ $(function(){
           types: ['geocode']//geocode, establishment, (regions), (cities), establishment
         },
         gmaps: true,
-        assign_after_blur: false,
+        tab_assign: true,
         assigned:{
           input_title: undefined,
           pin_title: 'Click to open on Google Maps.',
@@ -174,6 +174,7 @@ $(function(){
 
         google.maps.event.addListener($inputs[i].autocomplete_gmap, 'place_changed', function(){
           var place_info = this.getPlace();
+          place_info.geometry.bounds = place_info.geometry.viewport;//ble
           this.inputPlace.tryAssign(place_info);
         });
 
@@ -183,12 +184,18 @@ $(function(){
           }
         });
 
-        //after autocomplete.place_changed
-        $(document).on('blur','.geo-contrast',function(){
-          if (this.options.assign_after_blur){
-            this.findPlaceInfo(this.getFirstHint(), function(){
-              this.tryAssign();
-            });
+        $(document).on('keydown','.geo-contrast',function(e){
+          switch(e.keyCode){
+            case 9:
+              if (this.options.tab_assign){
+                this.findPlaceInfo(this.getFirstHint(), function(){
+                  this.tryAssign();
+                });
+              }
+            break;
+            case 13:
+              e.preventDefault();
+            break;
           }
         });
 
