@@ -6,12 +6,15 @@
     <script type="text/javascript" src="geo-contrast.jquery.js"></script>
     <script type="text/javascript">
     $(function(){
-        $('.geo').geoContrast();
+        $('.geo').geoContrast().appendBounds();
     });
     </script>
 </head>
 <body>
-    <input name="user[address]" id="geo1" type="text" style="width: 400px" class="geo"
+    <input name="user[address]" type="search" style="width: 400px" class="geo"
       value="parque moinhos de Vento, Porto Alegre"/>
+
+    <input name="user[address2]" type="search" style="width: 400px" class="geo"
+      value="Porto Alegre"/>
 </body>
 </html>

@@ -5,9 +5,8 @@ $(function(){
     window.geoContrast = {
       count: 0,
       options_default: {
-        options_gmap: { //http://goo.gl/clWmHG
-          componentRestrictions: { country: 'br'},
-          types: ['geocode']//geocode, establishment, (regions), (cities), establishment
+        options_gmaps: {//http://goo.gl/clWmHG
+          types: ['geocode']//geocode, (regions), (cities), establishment
         },
         gmaps: true,
         tab_assign: true,
@@ -24,15 +23,30 @@ $(function(){
       }
     }
 
+    $.fn.appendBounds = function(){
+      var $inputs = this;
+      for (var i = 0; i < $inputs.length; i++){
+        $inputs[i].appendBounds();
+      }
+    };
+
+    $.fn.appendCoords = function(){
+      var $inputs = this;
+      for (var i = 0; i < $inputs.length; i++){
+        $inputs[i].appendCoords();
+      }
+    };
+
     $.fn.geoContrast = function(options){
       var $inputs = this;
       for (var i = 0; i < $inputs.length; i++){
         window.geoContrast.count += 1;
         //props
+        $inputs[i].index = i;
         $inputs[i].options = $.extend(true,window.geoContrast.options_default,options);
-        $inputs[i].autocomplete_gmap = new google.maps.places.Autocomplete($inputs[i], $inputs[i].options.options_gmap);
+        $inputs[i].autocomplete_gmaps = new google.maps.places.Autocomplete($inputs[i], $inputs[i].options.options_gmaps);
         $inputs[i].geocoder = new google.maps.Geocoder();
-        $inputs[i].autocomplete_gmap.inputPlace = $inputs[i];//accessibility
+        $inputs[i].autocomplete_gmaps.inputPlace = $inputs[i];//accessibility
         $inputs[i].$pin = $('<label class="pin_geo-contrast"/>');
         $inputs[i].$inputPlace = $($inputs[i]);
         //endprops
@@ -154,9 +168,9 @@ $(function(){
           this.$pin.after(this.$lat);
         }
 
-        $inputs[i].getFirstHint = function(){
-          //fail with multiples
-          return $(".pac-container .pac-item:first").text();
+        $inputs[i].firstHint = function(){
+          var eq = this.index;
+          return $(this).siblings('.pac-container:eq('+eq+')').children(':first').text();
         }
         //endmethods
 
@@ -172,7 +186,7 @@ $(function(){
           cursor: 'pointer'
         });
 
-        google.maps.event.addListener($inputs[i].autocomplete_gmap, 'place_changed', function(){
+        google.maps.event.addListener($inputs[i].autocomplete_gmaps, 'place_changed', function(){
           var place_info = this.getPlace();
           place_info.geometry.bounds = place_info.geometry.viewport;//ble
           this.inputPlace.tryAssign(place_info);
@@ -188,7 +202,7 @@ $(function(){
           switch(e.keyCode){
             case 9:
               if (this.options.tab_assign){
-                this.findPlaceInfo(this.getFirstHint(), function(){
+                this.findPlaceInfo(this.firstHint(), function(){
                   this.tryAssign();
                 });
               }
@@ -210,5 +224,6 @@ $(function(){
         });
         //endinit
       }
+      return $inputs;
     }
 });
