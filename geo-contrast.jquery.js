@@ -170,7 +170,7 @@ $(function(){
 
         $inputs[i].firstHint = function(){
           var eq = this.index;
-          return $(this).siblings('.pac-container:eq('+eq+')').children(':first').text();
+          return $('.pac-container:eq('+eq+') > :first').text();
         }
         //endmethods
 
