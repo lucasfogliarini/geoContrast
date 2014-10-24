@@ -3,13 +3,13 @@ geoContrast v0.9 author: https://github.com/lucasfogliarini
 */
 $(function(){
     window.geoContrast = {
-      count: 0,
       options_default: {
-        options_gmaps: {//http://goo.gl/clWmHG
+        options_gmaps: {//api: http://goo.gl/x3h6o3
           types: ['geocode']//geocode, (regions), (cities), establishment
         },
-        gmaps: true,
-        tab_assign: true,
+        address_format: 'formatted',//formatted: formatted_address || friendly: 'long'
+        gmaps_through_pin: true,
+        assign_through_tab: true,
         assigned:{
           input_title: undefined,
           pin_title: 'Click to open on Google Maps.',
@@ -26,7 +26,6 @@ $(function(){
     $.fn.geoContrast = function(options){
       var $inputs = this;
       for (var i = 0; i < $inputs.length; i++){
-        window.geoContrast.count += 1;
         //props
         $inputs[i].index = i;
         $inputs[i].options = $.extend(true,window.geoContrast.options_default,options);
@@ -108,17 +107,17 @@ $(function(){
 
           var place_info_assigned = this.placeInfoAssigned();
           if(place_info_assigned){
-            this.value = this.place_info.formatted_address;
+            this.value = this.options.address_format == 'formatted' ? this.place_info.formatted_address : this.place_info.address_components[0].long_name;
             this.syncCoords();
             this.syncBounds();
           }
           this.toggle(place_info_assigned);
         }
 
-        $inputs[i].findPlaceInfo = function(formatted_address, call){
-          if(formatted_address !== ""){
+        $inputs[i].findPlaceInfo = function(address, call){
+          if(address !== ""){
             var inputPlace = this;
-            this.geocoder.geocode({"address": formatted_address }, function(results) {
+            this.geocoder.geocode({"address": address }, function(results) {
               if (results.length > 0) {
                 inputPlace.place_info = results[0];
                 if (call !== undefined) {
@@ -185,7 +184,7 @@ $(function(){
         $(document).on('keydown','.geo-contrast',function(e){
           switch(e.keyCode){
             case 9:
-              if (this.options.tab_assign){
+              if (this.options.assign_through_tab){
                 this.findPlaceInfo(this.firstHint(), function(){
                   this.tryAssign();
                 });
@@ -199,7 +198,7 @@ $(function(){
 
         $(document).on('click','.pin_geo-contrast',function(){
           var input = $(this).prev()[0];
-          if (input.placeInfoAssigned() && input.options.gmaps)
+          if (input.placeInfoAssigned() && input.options.gmaps_through_pin)
             window.open('https://www.google.com.br/maps/place/'+input.place_info.formatted_address);
         });
         $inputs[i].toggle(false);
