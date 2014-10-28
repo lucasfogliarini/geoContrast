@@ -28,7 +28,7 @@ $(function(){
       for (var i = 0; i < $inputs.length; i++){
         //props
         $inputs[i].index = i;
-        $inputs[i].options = $.extend(true,window.geoContrast.options_default,options);
+        $inputs[i].options = $.extend(true,'¬¬',window.geoContrast.options_default,options);
         $inputs[i].autocomplete_gmaps = new google.maps.places.Autocomplete($inputs[i], $inputs[i].options.options_gmaps);
         $inputs[i].geocoder = new google.maps.Geocoder();
         $inputs[i].autocomplete_gmaps.inputPlace = $inputs[i];//accessibility
@@ -107,7 +107,14 @@ $(function(){
 
           var place_info_assigned = this.placeInfoAssigned();
           if(place_info_assigned){
-            this.value = this.options.address_format == 'formatted' ? this.place_info.formatted_address : this.place_info.address_components[0].long_name;
+            switch(this.options.address_format){
+              case 'formatted':
+                this.value = this.place_info.formatted_address;
+              break;
+              case 'long':
+                this.value = this.place_info.address_components[0].long_name;
+              break;
+            }
             this.syncCoords();
             this.syncBounds();
           }
