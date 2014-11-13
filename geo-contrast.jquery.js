@@ -91,8 +91,10 @@ $(function(){
           try{
             if (this.$bounds !== undefined){
               var bounds;
-              if (this.boundsAssigned()) {
+              if (this.boundsAssigned()){
                 bounds = this.place_info.geometry.bounds.toUrlValue();
+              }else if(this.placeInfoAssigned()){
+                bounds = "0,0,0,0";
               }
               this.$bounds.val(bounds);
             }
