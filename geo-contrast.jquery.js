@@ -1,5 +1,5 @@
 /*
-geoContrast v0.9.5 author: https://github.com/lucasfogliarini
+geoContrast v1.0 author: https://github.com/lucasfogliarini
 */
 $(function(){
     window.geoContrast = {
@@ -152,7 +152,6 @@ $(function(){
         current.append_coords = function(lat_name,lng_name){
           lat_name = lat_name ? lat_name : "latitude";
           lng_name = lng_name ? lng_name : "longitude";
-          console.log(this);
           lat_name = remake_name(this,function(args){
             args.attribute = lat_name;
           });
@@ -164,8 +163,8 @@ $(function(){
           this.$lat.prop('name',lat_name);
           this.$lng.prop('name',lng_name);
 
-          this.$pin.before(this.$lng);
-          this.$pin.before(this.$lat);
+          $(this).before(this.$lng);
+          $(this).before(this.$lat);
         }
 
         current.first_hint = function(){
@@ -179,13 +178,16 @@ $(function(){
         $current.addClass('geocontrast');
         $current.css('padding-right','20px');
         $current.after(current.$pin);
+
         current.$pin.css({
-          position:'relative',
-          right:'20px',
-          top:'1px',
-          padding: '0 8px',
+          position:'absolute',
+          left: current.offsetLeft + current.offsetWidth - 18,
+          top: current.offsetTop + ((current.offsetHeight - 16) / 2),
+          height: '16px',
+          width: '16px',
           cursor: 'pointer'
         });
+
         if (current.options.format == "short") {
           $current.before(current.$formatted);
           var name = remake_name(current,function(args){
@@ -223,8 +225,9 @@ $(function(){
 
         $(document).on('click','.pin_geocontrast',function(){
           var input = $(this).prev()[0];
-          if (input.assigned() && input.options.gmaps_through_pin)
+          if (input.assigned() && input.options.gmaps_through_pin){
             window.open('https://www.google.com.br/maps/place/'+input.place_info.formatted_address);
+          }
         });
         current.toggle(false);
         current.find_address($current.data('address'),function(){
