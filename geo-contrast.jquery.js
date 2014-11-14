@@ -1,5 +1,5 @@
 /*
-geoContrast v0.9 author: https://github.com/lucasfogliarini
+geoContrast v0.9.1 author: https://github.com/lucasfogliarini
 */
 $(function(){
     window.geoContrast = {
@@ -31,52 +31,52 @@ $(function(){
         $inputs[i].options = $.extend(true,'¬¬',window.geoContrast.options_default,options);
         $inputs[i].autocomplete_gmaps = new google.maps.places.Autocomplete($inputs[i], $inputs[i].options.options_gmaps);
         $inputs[i].geocoder = new google.maps.Geocoder();
-        $inputs[i].autocomplete_gmaps.inputPlace = $inputs[i];//accessibility
-        $inputs[i].$pin = $('<span class="pin_geo-contrast"/>');
-        $inputs[i].$bounds = $('<input class="bounds_geo-contrast" type="hidden" />');
-        $inputs[i].$lat = $('<input class="lat_geo-contrast" type="hidden" />');
-        $inputs[i].$lng = $('<input class="lng_geo-contrast" type="hidden" />');
-        $inputs[i].$inputPlace = $($inputs[i]);
+        $inputs[i].autocomplete_gmaps.geocontrast = $inputs[i];//accessibility
+        $inputs[i].$pin = $('<span class="pin_geocontrast"/>');
+        $inputs[i].$bounds = $('<input class="bounds_geocontrast" type="hidden" />');
+        $inputs[i].$lat = $('<input class="lat_geocontrast" type="hidden" />');
+        $inputs[i].$lng = $('<input class="lng_geocontrast" type="hidden" />');
+        $inputs[i].$self = $($inputs[i]);
         //endprops
 
         //methods
-        $inputs[i].toggle = function(assign){
+        $inputs[i].toggle = function(state){
           var input_title, pin, pin_title;
 
-          if (assign){
+          if (state){
             pin_img = this.options.assigned.pin_img;
             pin_title = this.options.assigned.pin_title;
             input_title = this.options.assigned.input_title;
             if(input_title){
-              this.$inputPlace.attr('title',input_title);
+              this.$self.attr('title',input_title);
             }
           }
           else{
             this.place_info = undefined;
-            this.syncCoords();
-            this.syncBounds();
+            this.sync_coords();
+            this.sync_bounds();
             pin_img = this.options.unassigned.pin_img;
             pin_title = this.options.unassigned.pin_title;
             input_title = this.options.unassigned.input_title;
           }
           this.$pin.css('background','no-repeat url('+pin_img+')');
           this.$pin.attr('title',pin_title);
-          this.$inputPlace.attr('title',input_title);
+          this.$self.attr('title',input_title);
         }
 
-        $inputs[i].placeInfoAssigned = function(){
+        $inputs[i].assigned = function(){
           return this.place_info !== undefined && this.place_info.formatted_address !== undefined;
         }
 
-        $inputs[i].boundsAssigned = function(){
-          return this.placeInfoAssigned() && this.place_info.geometry.bounds !== undefined;
+        $inputs[i].bounds_assigned = function(){
+          return this.assigned() && this.place_info.geometry.bounds !== undefined;
         }
 
-        $inputs[i].syncCoords = function(){
+        $inputs[i].sync_coords = function(){
           try{
             var lat;
             var lng;
-            if(this.placeInfoAssigned()) {
+            if(this.assigned()) {
               lat = this.place_info.geometry.location.lat();
               lng = this.place_info.geometry.location.lng();
             }
@@ -87,13 +87,13 @@ $(function(){
           }
         }
 
-        $inputs[i].syncBounds = function(){
+        $inputs[i].sync_bounds = function(){
           try{
             if (this.$bounds !== undefined){
               var bounds;
-              if (this.boundsAssigned()){
+              if (this.bounds_assigned()){
                 bounds = this.place_info.geometry.bounds.toUrlValue();
-              }else if(this.placeInfoAssigned()){
+              }else if(this.assigned()){
                 bounds = "0,0,0,0";
               }
               this.$bounds.val(bounds);
@@ -103,11 +103,11 @@ $(function(){
           }
         }
 
-        $inputs[i].tryAssign = function(place_info){
+        $inputs[i].try_assign = function(place_info){
           if(place_info !== undefined)
             this.place_info = place_info;
 
-          var place_info_assigned = this.placeInfoAssigned();
+          var place_info_assigned = this.assigned();
           if(place_info_assigned){
             switch(this.options.address_format){
               case 'formatted':
@@ -117,59 +117,59 @@ $(function(){
                 this.value = this.place_info.address_components[0].long_name;
               break;
             }
-            this.syncCoords();
-            this.syncBounds();
+            this.sync_coords();
+            this.sync_bounds();
           }
           this.toggle(place_info_assigned);
         }
 
-        $inputs[i].findPlaceInfo = function(address, call){
+        $inputs[i].find_address = function(address, call){
           if(address !== ""){
-            var inputPlace = this;
+            var geocontrast = this;
             this.geocoder.geocode({"address": address }, function(results) {
               if (results.length > 0) {
-                inputPlace.place_info = results[0];
+                geocontrast.place_info = results[0];
                 if (call !== undefined) {
-                  call.call(inputPlace);
+                  call.call(geocontrast);
                 };
               }
             });
           }
         }
 
-        $inputs[i].appendBounds = function(boundsName){
-          boundsName = boundsName ? boundsName : "bounds";
-          this.$bounds.prop('name',boundsName);
+        $inputs[i].append_bounds = function(bounds_name){
+          bounds_name = bounds_name ? bounds_name : "bounds";
+          this.$bounds.prop('name',bounds_name);
           this.$pin.after(this.$bounds);
         }
 
-        $inputs[i].appendCoords = function(latName,lngName){
-          latName = latName ? latName : "latitude";
-          lngName = lngName ? lngName : "longitude";
-          var firstBracket = this.name.indexOf('[');
-          if (firstBracket > 0){
-            var inputAttr = this.name.substr(firstBracket);
-            latName = this.name.replace(inputAttr,"["+latName+"]");
-            lngName = this.name.replace(inputAttr,"["+lngName+"]");
+        $inputs[i].append_coords = function(lat_name,lng_name){
+          lat_name = lat_name ? lat_name : "latitude";
+          lng_name = lng_name ? lng_name : "longitude";
+          var first_bracket = this.name.indexOf('[');
+          if (first_bracket > 0){
+            var input_attr = this.name.substr(first_bracket);
+            lat_name = this.name.replace(input_attr,"["+lat_name+"]");
+            lng_name = this.name.replace(input_attr,"["+lng_name+"]");
           }
 
-          this.$lat.prop('name',latName);
-          this.$lng.prop('name',lngName);
+          this.$lat.prop('name',lat_name);
+          this.$lng.prop('name',lng_name);
 
           this.$pin.after(this.$lng);
           this.$pin.after(this.$lat);
         }
 
-        $inputs[i].firstHint = function(){
+        $inputs[i].first_hint = function(){
           var eq = this.index;
           return $('.pac-container:eq('+eq+') > :first').text();
         }
         //endmethods
 
         //init
-        $inputs[i].$inputPlace.addClass('geo-contrast');
-        $inputs[i].$inputPlace.css('padding-right','20px');
-        $inputs[i].$inputPlace.after($inputs[i].$pin);
+        $inputs[i].$self.addClass('geocontrast');
+        $inputs[i].$self.css('padding-right','20px');
+        $inputs[i].$self.after($inputs[i].$pin);
         $inputs[i].$pin.css({
           position:'relative',
           right:'20px',
@@ -180,22 +180,23 @@ $(function(){
 
         google.maps.event.addListener($inputs[i].autocomplete_gmaps, 'place_changed', function(){
           var place_info = this.getPlace();
-          place_info.geometry.bounds = place_info.geometry.viewport;//ble
-          this.inputPlace.tryAssign(place_info);
+          place_info.geometry.bounds = place_info.geometry.viewport;//:/
+          place_info.formatted_address = place_info.name;
+          this.geocontrast.try_assign(place_info);
         });
 
-        $(document).on('input','.geo-contrast',function(){
-          if(this.placeInfoAssigned()){
+        $(document).on('input','.geocontrast',function(){
+          if(this.assigned()){
             this.toggle(false);
           }
         });
 
-        $(document).on('keydown','.geo-contrast',function(e){
+        $(document).on('keydown','.geocontrast',function(e){
           switch(e.keyCode){
             case 9:
               if (this.options.assign_through_tab){
-                this.findPlaceInfo(this.firstHint(), function(){
-                  this.tryAssign();
+                this.find_address(this.first_hint(), function(){
+                  this.try_assign();
                 });
               }
             break;
@@ -205,14 +206,14 @@ $(function(){
           }
         });
 
-        $(document).on('click','.pin_geo-contrast',function(){
+        $(document).on('click','.pin_geocontrast',function(){
           var input = $(this).prev()[0];
-          if (input.placeInfoAssigned() && input.options.gmaps_through_pin)
+          if (input.assigned() && input.options.gmaps_through_pin)
             window.open('https://www.google.com.br/maps/place/'+input.place_info.formatted_address);
         });
         $inputs[i].toggle(false);
-        $inputs[i].findPlaceInfo($inputs[i].value,function(){
-          this.tryAssign();
+        $inputs[i].find_address($inputs[i].value,function(){
+          this.try_assign();
         });
         //endinit
       }
