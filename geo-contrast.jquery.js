@@ -5,7 +5,7 @@ $(function(){
     window.geoContrast = {
       options_default: {
         options_gmaps: {//api: http://goo.gl/x3h6o3
-          types: ['geocode']//,'(regions)','(cities)', 'establishment']
+          //types: ['geocode','(regions)','(cities)', 'establishment']
         },
         format: 'short',//formatted
         gmaps_through_pin: true,
