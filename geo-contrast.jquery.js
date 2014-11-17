@@ -56,6 +56,7 @@ $(function(){
             this.place_info = undefined;
             this.sync_coords();
             this.sync_bounds();
+            this.$formatted.val("");
             pin_img = this.options.unassigned.pin_img;
             pin_title = this.options.unassigned.pin_title;
             input_title = this.options.unassigned.input_title;
@@ -104,10 +105,7 @@ $(function(){
           }
         }
 
-        current.try_assign = function(place_info){
-          if(place_info !== undefined)
-            this.place_info = place_info;
-
+        current.sync = function(){
           var assigned = this.assigned();
           if(assigned){
             switch(this.options.format){
@@ -197,9 +195,9 @@ $(function(){
         };
 
         google.maps.event.addListener(current.autocomplete_gmaps, 'place_changed', function(){
-          var place_info = this.getPlace();
-          place_info.geometry.bounds = place_info.geometry.viewport;//:/
-          this.geocontrast.try_assign(place_info);
+          this.geocontrast.place_info = this.getPlace();
+          this.geocontrast.place_info.geometry.bounds = this.geocontrast.place_info.geometry.viewport;//:/
+          this.geocontrast.sync();
         });
 
         $(document).on('input','.geocontrast',function(){
@@ -213,7 +211,7 @@ $(function(){
             case 9:
               if (this.options.assign_through_tab){
                 this.find_address(this.first_hint(), function(){
-                  this.try_assign();
+                  this.sync();
                 });
               }
             break;
@@ -231,7 +229,7 @@ $(function(){
         });
         current.toggle(false);
         current.find_address($current.data('address'),function(){
-          this.try_assign();
+          this.sync();
         });
         //endinit
       }
