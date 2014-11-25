@@ -132,7 +132,7 @@ $(function(){
                 var addresses = geocontrast.place_info.address_components.filter(function(each){
                   return each.types[0] != "street_number";
                 });
-                geocontrast.place_info.name = addresses[0].short_name;
+                geocontrast.place_info.name = addresses[0].long_name;
                 if (call !== undefined) {
                   call.call(geocontrast);
                 };
