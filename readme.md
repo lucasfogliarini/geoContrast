@@ -1,37 +1,11 @@
 #### Hello, i am geoContrast.
 
-### Want to know me? :)
+#### I and [my friend](https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete) can help you get [informations](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about the place you want and generate the follow types of inputs:
+- Coordinates - *myself.append_coords();*
+- Bounds - *myself.append_bounds();*
 
-- Want coordinates of a place on earth?
-- Want a unique id of this place?
-- Want a [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about this place?
-
-I can get it for you. **:)**
-
-**Are you ready?**
-**Let's go!**
-
-Goto [my clone](http://codepen.io/lucasfogliarini/pen/zhjHB) and back here!
-
-### Imagine one @place
-(recommended) @place = "parque moinhos de Vento, Porto Alegre"
-
-1. **Type:** @place.
-2. Choice a hint.
-3. Caught the @place?
-4. Now you can...
-  * Open on google maps: **Click on black pin.**
-  * Get [google information](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult): **document.getElementById('#id').place_info.**
-
-Want to know more about me? Ask to [*lucasfogliarini*](http://about.me/lucasfogliarini/).
-
-#### Dependencies? Yes. :(
+#### Dependencies? Yes.
 
 1. http://maps.googleapis.com/maps/api/js?libraries=places.
 2. http://code.jquery.com/jquery-2.1.0.min.js.
 3. https://rawgit.com/lucasfogliarini/geoContrast/master/geo-contrast.jquery.js
-
-Did you like me? Use me. **:)**  
-Did you like part of me? Fork me. **:)**  
-Didn't you like me? **:(**  
-...Do better! **-.-**
