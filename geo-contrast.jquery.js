@@ -1,5 +1,7 @@
 /*
-geoContrast v1.0 author: https://github.com/lucasfogliarini
+geoContrast v1.0
+
+https://github.com/lucasfogliarini/geoContrast
 */
 $(function(){
     window.geoContrast = {
