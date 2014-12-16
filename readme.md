@@ -1,6 +1,6 @@
 #### Hello, i am geoContrast.
 
-#### I and [my friend](https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete) can help you get [informations](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about the place you want and generate the follow types of inputs:
+#### Me and [my friend](https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete) can help you get [informations](https://developers.google.com/maps/documentation/javascript/reference?hl=pt-br#PlaceResult) about the places you are looking for and append the follow types of inputs:
 - Coordinates - *myself.append_coords();*
 - Bounds - *myself.append_bounds();*
 
