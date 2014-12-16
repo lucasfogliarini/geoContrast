@@ -229,7 +229,7 @@ $(function(){
           }
         });
         current.toggle(false);
-        current.find_address($current.data('address'),function(){
+        current.find_address($current.data('find-address'),function(){
           this.sync();
         });
         //endinit
