@@ -108,6 +108,7 @@ $(function(){
         current.sync = function(){
           var assigned = this.assigned();
           if(assigned){
+            this.place_info.formatted_address = geoContrast.format_address(this.place_info.address_components);
             switch(this.options.format){
               case 'short':
                 this.value = this.place_info.name;
@@ -150,11 +151,11 @@ $(function(){
         current.append_coords = function(lat_name,lng_name){
           lat_name = lat_name ? lat_name : "latitude";
           lng_name = lng_name ? lng_name : "longitude";
-          lat_name = remake_name(this,function(args){
+          lat_name = geoContrast.remake_name(this,function(args){
             args.attribute = lat_name;
           });
 
-          lng_name = remake_name(this,function(args){
+          lng_name = geoContrast.remake_name(this,function(args){
             args.attribute = lng_name;
           });
 
@@ -188,7 +189,7 @@ $(function(){
 
         if (current.options.format == "short") {
           $current.before(current.$formatted);
-          var name = remake_name(current,function(args){
+          var name = geoContrast.remake_name(current,function(args){
             args.attribute += "_formatted";
           });
           current.$formatted.attr("name", name);
@@ -236,7 +237,7 @@ $(function(){
       return $inputs;
     }
 
-    window.remake_name = function(input, delegate){
+    window.geoContrast.remake_name = function(input, delegate){
       var args = {
         attribute: input.name
       }, attr_bracket
@@ -247,5 +248,31 @@ $(function(){
       }
       delegate(args);
       return first_bracket > 0 ? input.name.replace(attr_bracket,"["+args.attribute+"]") : args.attribute;
+    }
+
+    window.geoContrast.format_address = function(address_components){
+      var route, street_number, neighborhood, locality, area_lvl_1, country;
+      for (var i = 0; i < address_components.length; i++) {
+         route = address_components[i].types[0] == "route" ? address_components[i] : route;
+         street_number = address_components[i].types[0] == "street_number" ? address_components[i] : street_number;
+         neighborhood = address_components[i].types[0] == "neighborhood" ? address_components[i] : neighborhood;
+         locality = address_components[i].types[0] == "locality" ? address_components[i] : locality;
+         area_lvl_1 = address_components[i].types[0] == "administrative_area_level_1" ? address_components[i] : area_lvl_1;
+         country = address_components[i].types[0] == "country" ? address_components[i] : country;
+      };
+      var route_street_number, neighborhood_locality, area_lvl_1_country, format;
+
+      route_street_number = route ? route.long_name : "";
+      route_street_number += street_number ? ", " + street_number.long_name : "";
+
+      neighborhood_locality = neighborhood ? neighborhood.long_name + ', ' : "";
+      neighborhood_locality += locality ? locality.long_name : "";
+
+      area_lvl_1_country = neighborhood_locality ? area_lvl_1.short_name + ", " : area_lvl_1 ? area_lvl_1.long_name + ", " : "";
+      area_lvl_1_country += country ? country.long_name : "";
+      format = route_street_number ? route_street_number + ' - ' : '';
+      format += neighborhood_locality ? neighborhood_locality + ' - ' : '';
+      format += area_lvl_1_country ? area_lvl_1_country : '';
+      return format;
     }
 });
