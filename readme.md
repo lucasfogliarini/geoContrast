@@ -8,4 +8,3 @@
 
 1. http://maps.googleapis.com/maps/api/js?libraries=places.
 2. http://code.jquery.com/jquery-2.1.0.min.js.
-3. https://rawgit.com/lucasfogliarini/geoContrast/master/geo-contrast.jquery.js
