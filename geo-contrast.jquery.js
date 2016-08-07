@@ -29,17 +29,20 @@ $(function(){
       for (var i = 0; i < $inputs.length; i++){
         var current = $inputs[i];
         var $current = $(current);
+        current.insertAfter = function (newNode) {
+            this.parentNode.insertBefore(newNode, this.nextSibling);
+        }
         //props
         current.index = i;
         current.options = $.extend(true,'¬¬',window.geoContrast.options_default,options);
         current.autocomplete_gmaps = new google.maps.places.Autocomplete(current, current.options.options_gmaps);
         current.geocoder = new google.maps.Geocoder();
         current.autocomplete_gmaps.geocontrast = current;//accessibility
-        current.$pin = $('<span class="pin_geocontrast"/>');
-        current.$bounds = $('<input class="bounds_geocontrast" type="hidden" />');
-        current.$lat = $('<input class="lat_geocontrast" type="hidden" />');
-        current.$lng = $('<input class="lng_geocontrast" type="hidden" />');
-        current.$formatted = $('<input class="formatted_geocontrast" type="hidden" />');
+        current.$pin = document.querySelector('<span class="pin_geocontrast"/>');
+        current.$bounds = document.querySelector('<input class="bounds_geocontrast" type="hidden" />');
+        current.$lat = document.querySelector('<input class="lat_geocontrast" type="hidden" />');
+        current.$lng = document.querySelector('<input class="lng_geocontrast" type="hidden" />');
+        current.$formatted = document.querySelector('<input class="formatted_geocontrast" type="hidden" />');
         //endprops
 
         //methods
@@ -58,13 +61,13 @@ $(function(){
             this.place_info = undefined;
             this.sync_coords();
             this.sync_bounds();
-            this.$formatted.val("");
+            this.$formatted.value = "";
             pin_img = this.options.unassigned.pin_img;
             pin_title = this.options.unassigned.pin_title;
             input_title = this.options.unassigned.input_title;
           }
-          this.$pin.css('background','no-repeat url('+pin_img+')');
-          this.$pin.attr('title',pin_title);
+          this.$pin.style.background = 'no-repeat url('+pin_img+')';
+          this.$pin.title = pin_title;
           this.title = input_title;
         }
 
@@ -84,8 +87,8 @@ $(function(){
               lat = this.place_info.geometry.location.lat();
               lng = this.place_info.geometry.location.lng();
             }
-            this.$lat.val(lat);
-            this.$lng.val(lng);
+            this.$lat.value = lat;
+            this.$lng.value = lng;
           } catch(ex){
             throw ex;
           }
@@ -100,7 +103,7 @@ $(function(){
               }else if(this.assigned()){
                 bounds = "0,0,0,0";
               }
-              this.$bounds.val(bounds);
+              this.$bounds.value = bounds;
             }
           } catch(ex){
             throw ex;
@@ -113,7 +116,7 @@ $(function(){
             switch(this.options.format){
               case 'short':
                 this.value = this.place_info.name;
-                this.$formatted[0].value = this.place_info.formatted_address;
+                this.$formatted.value = this.place_info.formatted_address;
               break;
               case 'formatted':
                 this.value = this.place_info.formatted_address;
@@ -174,19 +177,17 @@ $(function(){
         //endmethods
 
         //init
-        $current = $(current);
-        $current.addClass('geocontrast');
-        $current.css('padding-right','20px');
+        $current = document.querySelector(current);
+        $current.className += 'geocontrast';
+        $current.style.paddingRight = '20px';
         $current.after(current.$pin);
 
-        current.$pin.css({
-          position:'absolute',
-          left: current.offsetLeft + current.offsetWidth - 18,
-          top: current.offsetTop + ((current.offsetHeight - 16) / 2),
-          height: '16px',
-          width: '16px',
-          cursor: 'pointer'
-        });
+        current.$pin.style.position = "absolute";
+        current.$pin.style.left = current.offsetLeft + current.offsetWidth - 18;
+        current.$pin.style.top = current.offsetTop + ((current.offsetHeight - 16) / 2);
+        current.$pin.style.height = "16px";
+        current.$pin.style.width = "16px";
+        current.$pin.style.cursor = "pointer";
 
         if (current.options.format == "short") {
           $current.before(current.$formatted);
