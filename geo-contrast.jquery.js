@@ -110,7 +110,6 @@ $(function(){
         current.sync = function(){
           var assigned = this.assigned();
           if(assigned){
-            this.place_info.formatted_address = geoContrast.format_address(this.place_info.address_components);
             switch(this.options.format){
               case 'short':
                 this.value = this.place_info.name;
@@ -250,31 +249,5 @@ $(function(){
       }
       delegate(args);
       return first_bracket > 0 ? input.name.replace(attr_bracket,"["+args.attribute+"]") : args.attribute;
-    }
-
-    window.geoContrast.format_address = function(address_components){
-      var route, street_number, neighborhood, locality, area_lvl_1, country;
-      for (var i = 0; i < address_components.length; i++) {
-         route = address_components[i].types[0] == "route" ? address_components[i] : route;
-         street_number = address_components[i].types[0] == "street_number" ? address_components[i] : street_number;
-         neighborhood = address_components[i].types[0] == "neighborhood" ? address_components[i] : neighborhood;
-         locality = address_components[i].types[0] == "locality" ? address_components[i] : locality;
-         area_lvl_1 = address_components[i].types[0] == "administrative_area_level_1" ? address_components[i] : area_lvl_1;
-         country = address_components[i].types[0] == "country" ? address_components[i] : country;
-      };
-      var route_street_number, neighborhood_locality, area_lvl_1_country, format;
-
-      route_street_number = route ? route.long_name : "";
-      route_street_number += street_number ? ", " + street_number.long_name : "";
-
-      neighborhood_locality = neighborhood ? neighborhood.long_name + ', ' : "";
-      neighborhood_locality += locality ? locality.long_name : "";
-
-      area_lvl_1_country = neighborhood_locality ? area_lvl_1.short_name + ", " : area_lvl_1 ? area_lvl_1.long_name + ", " : "";
-      area_lvl_1_country += country ? country.long_name : "";
-      format = route_street_number ? route_street_number + ' - ' : '';
-      format += neighborhood_locality ? neighborhood_locality + ' - ' : '';
-      format += area_lvl_1_country ? area_lvl_1_country : '';
-      return format;
     }
 });
