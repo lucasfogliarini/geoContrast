@@ -1,4 +1,4 @@
-retired.
+discontinued.
 
-new repository, javascript pure:
+new repository, javascript only:
 https://github.com/lucasfogliarini/gps
